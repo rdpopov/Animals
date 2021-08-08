@@ -1,0 +1,4 @@
+rosko
+bosko
+loshko
+roshko
