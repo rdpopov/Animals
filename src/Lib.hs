@@ -1,7 +1,7 @@
-module Lib(p,c)where
+module Lib ( p,c)where
 
-p :: String
-p = "someFunc"
+p :: IO ()
+p = putStrLn "someFunc"
 
 c :: IO ()
 c = putStr "kur"

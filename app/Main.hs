@@ -1,8 +1,15 @@
 module Main(
+    Animal(Animal),
+    attributes,
+    hasAttr,
+    name,
+    attrLeft,
+    helper,
+    formatTO,
+    has,
     main
     ) where
 
-import Lib (p,c)
 import System.IO
 import Data.Typeable
 import Data.List
@@ -11,21 +18,16 @@ import System.Exit
 
 data Animal = Animal String [String]
   deriving (Read, Show,Eq)
-
+ 
 attributes (Animal _ attr) = attr
 name (Animal name _) = name
 
 hasAttr :: String -> Animal -> Bool
 hasAttr attr anim = attr `elem` attributes anim
 
-hasAttributes :: [String] -> Animal -> Bool
-hasAttributes attr anim = length (attr `intersect ` attributes anim) == length attr 
-
-
 attrLeft :: [Animal] -> [String] ->[String]
 attrLeft animals traits = do
   (nub( concatMap attributes animals)) \\ traits 
-
 
 has :: [Animal] -> String -> [Animal] 
 has animals trait = filter (hasAttr trait) animals
@@ -37,18 +39,18 @@ helper pool item = not $ (name item) `elem` pool
 formatTO ani = show ani ++ "\n"
 
 main = do
-            let f = "animals"
-            hSetBuffering stdout NoBuffering
-            content <- readFile f
-            let zoo :: [Animal] = map read $ lines content
-            let attr =  attrLeft zoo []
-            akinator attr zoo []
-            tmp <- readFile "animals.bak"
-            let new_entries :: [Animal] = map read $ lines tmp
-            let newNames = map name new_entries
-            let final_data = filter (helper newNames) zoo
-            writeFile f $ concatMap formatTO final_data
-
+       ar <- getArgs
+       let f = head ar
+       hSetBuffering stdout NoBuffering
+       content <- readFile f
+       let zoo :: [Animal] = map read $ lines content
+       let attr =  attrLeft zoo []
+       akinator attr zoo []
+       tmp <- readFile ".animals.bak"
+       let new_entries :: [Animal] = map read $ lines tmp
+       let newNames = map name new_entries
+       let final_data = filter (helper newNames) zoo
+       writeFile f $ concatMap formatTO (final_data ++ new_entries)
 
 trans :: String->Bool
 trans "y"   = True
@@ -96,13 +98,13 @@ almostAnimal traits animal = do
   putStrLn ("Animal has " ++ show traits )
   putStrLn ("What trait is different from " ++ name animal ++ "? ")
   newTrait <- getLine
-  putStrLn ("Does " ++ name animal ++ " bear that trait? y/n ")
+  putStrLn ("Does " ++ name animal ++ " bear " ++ newTrait ++" trait? y/n ")
   traitFor <-getLine
   if trans traitFor
-     then writeFile "animals.bak" 
-           (show (Animal newName (newTrait:traits)) ++ "\n" ++  show animal ++ "\n")
-     else writeFile "animals.bak" 
+     then writeFile ".animals.bak" 
            (show (Animal newName traits) ++ "\n" ++  show (Animal (name animal) (newTrait:traits)) ++ "\n")
+     else writeFile ".animals.bak" 
+           (show (Animal newName (newTrait:traits)) ++ "\n" ++  show animal ++ "\n")
 
 
 newAnimal ::[String]->IO()
@@ -112,6 +114,6 @@ newAnimal traits = do
   putStrLn ("Animal has " ++ show traits ++ ". Add a new trait?(leave empty for no) ")
   newTrait <- getLine
   if null newTrait
-    then writeFile "animals.bak" (show (Animal newName traits) ++ "\n")
-    else writeFile "animals.bak" (show (Animal newName (newTrait:traits)) ++ "\n")
+    then writeFile ".animals.bak" (show (Animal newName traits) ++ "\n")
+    else writeFile ".animals.bak" (show (Animal newName (newTrait:traits)) ++ "\n")
 
