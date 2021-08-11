@@ -113,7 +113,7 @@ newAnimal traits = do
   newName <- getLine
   putStrLn ("Animal has " ++ show traits ++ ". Add a new trait?(leave empty for no) ")
   newTrait <- getLine
-  if null newTrait
+  if newTrait == ""
     then writeFile ".animals.bak" (show (Animal newName traits) ++ "\n")
     else writeFile ".animals.bak" (show (Animal newName (newTrait:traits)) ++ "\n")
 
