@@ -40,7 +40,7 @@ executable Animal-exe
       Paths_Animal
   hs-source-dirs:
       app
-  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N -fglasgow-exts
   build-depends:
       Animal
     , base >=4.7 && <5
